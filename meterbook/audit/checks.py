@@ -64,6 +64,10 @@ def check(store):
         payment = payments.get(store, row['payment_id'])
         if payment['allocated_cents'] > payment['amount_cents']:
             problems.append({'code': 'payment_overallocated', 'payment_id': row['payment_id']})
+    from meterbook.forecasting import experiments as forecast_module
+    forecast_report = forecast_module.check(store)
+    if forecast_report['configured']:
+        problems.extend(forecast_report['problems'])
     return {'ok': not problems, 'problems': problems, 'database': database, 'audit': chain}
 
 
